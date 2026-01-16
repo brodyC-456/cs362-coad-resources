@@ -15,7 +15,7 @@ RSpec.describe Region, type: :model do
   end
 
   it "has many tickets" do
-        should have_many(:ticket)
-    end
+    should have_many(:tickets)
+  end
 
 end
