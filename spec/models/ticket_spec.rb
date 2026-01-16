@@ -24,15 +24,19 @@ RSpec.describe Ticket, type: :model do
         expect(ticket).to respond_to(:closed_at)
     end
 
-
-
-
     it "belongs to region" do
         should belong_to(:region) # if the belongs_to is optionial, add ".optional"
     end
 
-    # look into rspec matchers to find tests for assoc. types that aren't belongs_to
+    it "belongs to resource category" do
+        should belong_to(:region) 
+    end
 
-    
+    it "belongs to resource category" do
+        should belong_to(:resource_category) 
+    end
 
+    it "belongs to organization" do
+        should belong_to(:organization).optional 
+    end
 end
