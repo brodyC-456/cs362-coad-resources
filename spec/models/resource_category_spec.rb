@@ -11,11 +11,11 @@ RSpec.describe ResourceCategory, type: :model do
     end
 
     it "has and belongs to many organizations" do
-        should have_and_belong_to_many(:organization)
+        should have_and_belong_to_many(:organizations)
     end
 
     it "has many tickets" do
-        should have_many(:ticket)
+        should have_many(:tickets)
     end
 
 end
