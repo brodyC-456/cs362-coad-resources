@@ -1,3 +1,7 @@
+# Users possess roles which either establish them as admins of organizations, or the default role. Users optionally belong to an organization. 
+# Users have the validation on email and password. 
+# Users have several fields dedicated to authentication and recovery, as well as several datetime fields for record keeping of various User mutating actions.
+
 class User < ApplicationRecord
 
   enum role: [:admin, :organization]

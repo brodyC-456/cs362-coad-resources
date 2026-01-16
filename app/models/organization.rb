@@ -1,3 +1,7 @@
+# Organization has attributes of enums for status and transportation, has users and tickets, and has and belongs to many resource categories. 
+# Additionally has a host of validations for users, emails, descriptions, etc.
+
+
 class Organization < ApplicationRecord
 
   attr_accessor :agreement_one, :agreement_two, :agreement_three, :agreement_four, :agreement_five, :agreement_six, :agreement_seven, :agreement_eight

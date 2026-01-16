@@ -1,3 +1,7 @@
+# Tickets have a lot of information and form the bulk of the relations by holding a lot of foreign keys. 
+# They belong to a region and a resource category and can optionally be owned by an organization once said organization captures it. 
+# There is some validation and lot of scope attached to tickets.
+
 class Ticket < ApplicationRecord
 
   belongs_to :region

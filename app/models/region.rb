@@ -1,3 +1,6 @@
+# Region simply has a name, and has many tickets, specifically the tickets point to the region.
+
+
 class Region < ApplicationRecord
 
   has_many :tickets

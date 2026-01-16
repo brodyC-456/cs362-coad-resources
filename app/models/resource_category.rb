@@ -1,3 +1,6 @@
+# Resource Category belongs to many organizations and has many tickets, but otherwise they simply are a name, and a boolean for being active or not. 
+
+
 class ResourceCategory < ApplicationRecord
 
   has_and_belongs_to_many :organizations
