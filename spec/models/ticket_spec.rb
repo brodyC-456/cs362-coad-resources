@@ -39,4 +39,35 @@ RSpec.describe Ticket, type: :model do
     it "belongs to organization" do
         should belong_to(:organization).optional 
     end
+
+    describe "Member function tests" do
+        let (:ticket_123) {Ticket.new(id: 123)}
+
+        it "converts to a string" do
+            expect(ticker_123.to_s).to eq "Ticket 123"
+        end
+    end
+
+    describe "Scope test" do
+
+        # Replace with factory to create valid tickets instead of putting bad tickets into the test DB
+        let(:ticket_open) do
+            t = Ticket.new
+            t.save(validate: false)
+            t
+        end
+        let(:ticket_closed) do 
+            t = Ticker.new(closed: true)
+            t.save(validate: false)
+            t
+        end
+
+        it "scopes open tickets" do
+            expect(Ticket.open).to include(ticket_open)
+        end
+        
+        it "scopes closed ticket" do
+            expect(Ticket.closed).to include(ticket_closed)
+        end
+    end
 end
