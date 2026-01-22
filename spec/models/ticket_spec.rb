@@ -82,5 +82,9 @@ RSpec.describe Ticket, type: :model do
         it "scopes closed ticket" do
             expect(Ticket.closed).to include(ticket_closed)
         end
+
+        it "absolutely fails" do
+            raise "if you see this, docker sees your files"
+        end
     end
 end
