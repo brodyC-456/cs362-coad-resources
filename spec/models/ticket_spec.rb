@@ -40,6 +40,27 @@ RSpec.describe Ticket, type: :model do
         should belong_to(:organization).optional 
     end
 
+    # Validation Tests
+    describe "validation tests" do
+      let (:ticket) {Ticket.new}
+
+      it ("must have a name") {should validate_presence_of(:name)}
+      it ("must have a phone") {should validate_presence_of(:phone)}
+      it ("must have a region id") {should validate_presence_of(:region_id)}
+      it ("must have a resource category id") {should validate_presence_of(:resource_category_id)}
+
+      it "must have a name with a length of less than 255 and more than 1 on creation" do
+        should validate_length_of(:name).is_at_least(1).is_at_most(255).on(:create)
+      end
+
+      it "cannot have a description with a length of more than 1020 on create" do
+        should validate_length_of(:description).is_at_most(1020).on(:create)
+      end
+
+      it ("must validate phone numbers") {should allow_value('+1-555-555-5555').for(:phone)}
+    end
+
+    # Member Function Tests
     describe "Member function tests" do
         let (:organization) {Organization.new}
         let (:ticket_123) {Ticket.new(id: 123,
@@ -61,6 +82,7 @@ RSpec.describe Ticket, type: :model do
         end
     end
 
+    # Scope Tests
     describe "Scope tests" do
 
         # Replace with factory to create valid tickets instead of putting bad tickets into the test DB
