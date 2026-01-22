@@ -61,7 +61,7 @@ RSpec.describe Ticket, type: :model do
         end
     end
 
-    describe "Scope test" do
+    describe "Scope tests" do
 
         # Replace with factory to create valid tickets instead of putting bad tickets into the test DB
         let(:ticket_open) do
@@ -75,16 +75,184 @@ RSpec.describe Ticket, type: :model do
             t
         end
 
-        it "scopes open tickets" do
-            expect(Ticket.open).to include(ticket_open)
-        end
-        
-        it "scopes closed ticket" do
-            expect(Ticket.closed).to include(ticket_closed)
+        let(:organization_1) do
+          org = Organization.new
+          org.save(validate: false)
+          org
         end
 
-        it "absolutely fails" do
-            raise "if you see this, docker sees your files"
+        let(:organization_2) do
+          org = Organization.new
+          org.save(validate: false)
+          org
+        end
+
+        let(:ticket_closed_captured) do 
+            t = Ticket.new(closed: true,
+            organization: organization_1)
+            t.save(validate: false)
+            t
+        end
+        let(:ticket_open_captured) do 
+            t = Ticket.new(closed: false,
+            organization: organization_2)
+            t.save(validate: false)
+            t
+        end
+
+        it "returns all open tickets" do
+            results = Ticket.open
+            expect(results).to include(ticket_open)
+
+            expect(results).not_to include(ticket_closed)
+            expect(results).not_to include(ticket_closed_captured)
+            expect(results).not_to include(ticket_open_captured)
+        end
+        
+        it "it returns all closed ticket" do
+            results = Ticket.closed
+            expect(results).to include(ticket_closed)
+
+            expect(results).not_to include(ticket_open)
+            expect(results).not_to include(ticket_open_captured)
+            expect(results).not_to include(ticket_closed_captured)
+        end
+
+        it "scopes all organizations" do
+          results = Ticket.all_organization
+
+          expect(results).to include(ticket_open_captured)
+
+          expect(results).not_to include(ticket_open)
+          expect(results).not_to include(ticket_closed)
+          expect(results).not_to include(ticket_closed_captured)
+        end
+
+        describe "Organization scoping" do
+        let(:org) do
+            o = Organization.new
+            o.save(validate: false)
+            o
+        end
+
+        let(:matching_ticket) do
+          t = Ticket.new(
+            closed: false,
+            organization: org
+          )
+          t.save(validate: false)
+          t
+        end
+
+        let(:closed_ticket) do
+          t = Ticket.new(
+            closed: true,
+            organization: org
+          )
+          t.save(validate: false)
+          t
+        end
+
+        let(:other_org_ticket) do
+            other = Organization.new
+            other.save(validate: false)
+
+            t = Ticket.new(
+                closed: false,
+                organization: other
+            )
+            t.save(validate: false)
+            t
+        end
+
+        it "returns open tickets for a specific organization" do
+          results = Ticket.organization(org.id)
+
+          expect(results).to include(matching_ticket)
+
+          expect(results).not_to include(closed_ticket)
+          expect(results).not_to include(other_org_ticket)
+        end
+
+        it "returns tickets closed for an organization" do
+          results = Ticket.closed_organization(org.id)
+
+          expect(results).to include(closed_ticket)
+
+          expect(results).not_to include(matching_ticket)
+          expect(results).not_to include(other_org_ticket)
+        end
+
+        it "does not return tickets from other organizations" do
+          results = Ticket.organization(org.id)
+          
+          expect(results).to include(matching_ticket)
+
+          expect(results).not_to include(other_org_ticket)
+        end
+
+        end
+
+        describe "Region scoping" do
+            let(:region) do
+                r = Region.new
+                r.save(validate: false)
+                r
+            end
+
+            let(:matching_ticket) do
+              t = Ticket.new(region: region)
+              t.save(validate: false)
+              t
+            end
+
+            let(:other_ticket) do
+                r = Region.new
+                r.save(validate: false)
+
+                t = Ticket.new(region: r)
+                t.save(validate: false)
+                t
+            end
+
+            it "filters by region" do
+              results = Ticket.region(region.id)
+
+              expect(results).to include(matching_ticket)
+
+              expect(results).not_to include(other_ticket)
+            end
+        end
+
+        describe "Resource Category scoping" do
+            let(:category) do
+                c = ResourceCategory.new
+                c.save(validate: false)
+                c
+            end 
+
+            let(:matching_ticket) do
+                t = Ticket.new(resource_category: category)
+                t.save(validate: false)
+                t
+            end
+
+            let(:other_ticket) do
+                c = ResourceCategory.new
+                c.save(validate: false)
+                
+                t = Ticket.new(resource_category: c)
+                t.save(validate: false)
+                t
+            end
+
+            it "filters tickets by resource category" do
+                results = Ticket.resource_category(category.id)
+
+                expect(results).to include(matching_ticket)
+
+                expect(results).not_to include(other_ticket)
+            end
         end
     end
 end
