@@ -62,5 +62,39 @@ RSpec.describe Organization, type: :model do
   it "has and belongs to many resource categories" do
     should have_and_belong_to_many(:resource_categories) 
   end
+
+  # Validation Tests
+  describe "validation tests" do
+    let (:organization) {Organization.new}
+
+    it ("must have an email") {should validate_presence_of(:email)}
+    it ("must have a name") {should validate_presence_of(:name)}
+    it ("must have a phone") {should validate_presence_of(:phone)}
+    it ("must have a status") {should validate_presence_of(:status)}
+    it ("must have a primary name") {should validate_presence_of(:primary_name)}
+    it ("must have a secondary name") {should validate_presence_of(:secondary_name)}
+    it ("must have a secondary phone") {should validate_presence_of(:secondary_phone)}
+
+    it "must have an email with a length of less than 256 and more than 0 on creation" do
+        should validate_length_of(:email).is_at_least(1).is_at_most(255).on(:create)
+    end
+
+    it "must have an name with a length of less than 256 and more than 0 on creation" do
+        should validate_length_of(:name).is_at_least(1).is_at_most(255).on(:create)
+    end
+
+    it "must have a description with a length of, at most, 1020" do
+        should validate_length_of(:description).is_at_most(1020).on(:create)
+    end
+
+    it "email must have a valid format" do 
+      should allow_value('john.doe+test-123@example-domain.com').for(:email)
+      should_not allow_value('foo bar').for(:email)
+    end
+
+    it("email must be unique") {should validate_uniqueness_of(:email).case_insensitive}
+    it("name must be unique") {should validate_uniqueness_of(:name).case_insensitive}
+
+  end
   
 end
