@@ -41,10 +41,23 @@ RSpec.describe Ticket, type: :model do
     end
 
     describe "Member function tests" do
-        let (:ticket_123) {Ticket.new(id: 123)}
+        let (:organization) {Organization.new}
+        let (:ticket_123) {Ticket.new(id: 123,
+         organization: organization)}
+
+         let (:ticket_unowned) {Ticket.new(id: 456,
+         organization: nil)}
 
         it "converts to a string" do
-            expect(ticker_123.to_s).to eq "Ticket 123"
+            expect(ticket_123.to_s).to eq "Ticket 123"
+        end
+
+        it "recognizes when an organization owns it" do
+            expect(ticket_123.captured?).to be true
+        end
+
+        it "recognizes when an organization doesn't own it" do
+            expect(ticket_unowned.captured?).to be false
         end
     end
 
@@ -57,7 +70,7 @@ RSpec.describe Ticket, type: :model do
             t
         end
         let(:ticket_closed) do 
-            t = Ticker.new(closed: true)
+            t = Ticket.new(closed: true)
             t.save(validate: false)
             t
         end
