@@ -37,7 +37,24 @@ RSpec.describe User, type: :model do
 
       it("email must be unique") {should validate_uniqueness_of(:email).case_insensitive}
 
-
     end
 
+    describe "Unit tests" do
+
+      let(:default_user) do
+        org = Organization.new
+        user = User.new(organization: org,
+        email: "HuntersMom@aol.com")
+        user.save(validate: false)
+        user
+      end
+
+      it "defaults to organization as role" do
+        expect(default_user.role).to eq("organization") #this method does not seem useful
+      end
+
+      it "converts to email address" do
+        expect(default_user.to_s).to eq("HuntersMom@aol.com")
+      end
+    end
 end
