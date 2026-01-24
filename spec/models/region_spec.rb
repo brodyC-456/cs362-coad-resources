@@ -8,12 +8,20 @@ RSpec.describe Region, type: :model do
     expect(region).to respond_to(:name)
   end
 
-  it "has a string representation that is its name" do
-    name = 'Mt. Hood'
-    region = Region.new(name: name)
-    result = region.to_s
+  describe "Unit tests" do 
     
-    expect(result).to eq("Mt. Hood")
+    it "has a string representation that is its name" do
+      name = 'Mt. Hood'
+      region = Region.new(name: name)
+      result = region.to_s
+
+      expect(result).to eq("Mt. Hood")
+    end
+
+    it "creates region with unspecified name" do
+      unspecified_region = Region.unspecified
+      expect(unspecified_region.name).to eq("Unspecified")
+    end
   end
 
   it "has many tickets" do
