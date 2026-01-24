@@ -12,6 +12,8 @@ RSpec.describe Region, type: :model do
     name = 'Mt. Hood'
     region = Region.new(name: name)
     result = region.to_s
+    
+    expect(result).to eq("Mt. Hood")
   end
 
   it "has many tickets" do
