@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
 
-  let (:user) {User.new}
+  let (:user) {build(:user)}
 
   it "responds to email" do
     expect(user).to respond_to(:email)
@@ -17,7 +17,7 @@ RSpec.describe User, type: :model do
   end
 
   describe "validation tests" do
-    let (:user) {User.new}
+    # let (:user) {User.new}
 
     it ("must have an email") {should validate_presence_of(:email)}
     it ("must have a password") {should validate_presence_of(:password).on(:create)}
@@ -41,20 +41,12 @@ RSpec.describe User, type: :model do
 
   describe "Unit tests" do
 
-    let(:default_user) do
-      org = Organization.new
-      user = User.new(organization: org,
-      email: "HuntersMom@aol.com")
-      user.save(validate: false)
-      user
-    end
-
     it "defaults to organization as role" do
-      expect(default_user.role).to eq("organization") #this method does not seem useful
+      expect(user.role).to eq("organization") #this method does not seem useful
     end
 
     it "converts to email address" do
-      expect(default_user.to_s).to eq("HuntersMom@aol.com")
+      expect(user.to_s).to eq("HuntersMom@aol.com")
     end
   end
 end

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Region, type: :model do
 
-  let (:region) {Region.new}
+  let (:region) {build(:region)}
 
   it "has a name" do
     expect(region).to respond_to(:name)
@@ -11,11 +11,9 @@ RSpec.describe Region, type: :model do
   describe "Unit tests" do 
     
     it "has a string representation that is its name" do
-      name = 'Mt. Hood'
-      region = Region.new(name: name)
       result = region.to_s
 
-      expect(result).to eq("Mt. Hood")
+      expect(result).to eq("Fake region name")
     end
 
     it "creates region with unspecified name" do
@@ -29,8 +27,6 @@ RSpec.describe Region, type: :model do
   end
 
   describe "validation tests" do
-    let (:region) {Region.new}
-
     it ("must have a name") {should validate_presence_of(:name)}
 
     it "must have an name with a length of less than 256 and more than 0 on creation" do
