@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe ResourceCategory, type: :model do
-    let (:resource_category) {ResourceCategory.new}
+    let (:resource_category) {build(:resource_category)}
 
     it "responds to name" do
       expect(resource_category).to respond_to(:name)
@@ -32,29 +32,22 @@ RSpec.describe ResourceCategory, type: :model do
     end
 
     describe "Unit tests" do
-      let(:resourceCategory) do
-        resource = ResourceCategory.new(name: "Water",
-        active: true)
-        resource.save(validate: false)
-        resource
-      end 
-
       it "can activate" do
-        expect(resourceCategory.inactive?).to eq(false)
+        expect(resource_category.inactive?).to eq(false)
       end
       
       it "can deactivate" do
-          resourceCategory.deactivate
-          expect(resourceCategory.inactive?).to eq(true)
+          resource_category.deactivate
+          expect(resource_category.inactive?).to eq(true)
       end
 
       it "knows if it is inactive" do
-          resourceCategory.deactivate
-          expect(resourceCategory.inactive?).to eq(true)
+          resource_category.deactivate
+          expect(resource_category.inactive?).to eq(true)
       end
 
       it "converts to string" do
-          expect(resourceCategory.to_s).to eq("Water")
+          expect(resource_category.to_s).to match(/Resource \d+/)
       end
 
       it "defaults to unspecified" do
@@ -64,29 +57,18 @@ RSpec.describe ResourceCategory, type: :model do
     end
 
     describe "Scope tests" do
-      let(:active_resource) do
-        resource = ResourceCategory.new(active: true)
-        resource.save(validate: false)
-        resource
-      end
+      let (:active_resource) {create(:resource_category, active: true)}
+      let (:inactive_resource) {create(:resource_category, active: false)}
 
-      let(:inactive_resource) do
-        resource = ResourceCategory.new(active: false)
-        resource.save(validate: false)
-        resource
-      end
-    
       it "returns all active resource categories" do
         results = ResourceCategory.active
         expect(results).to include(active_resource)
-
         expect(results).not_to include(inactive_resource)
       end
 
       it "returns all inactive resource categories" do
           results = ResourceCategory.inactive
           expect(results).to include(inactive_resource)
-
           expect(results).not_to include(active_resource)
       end
     end

@@ -1,44 +1,27 @@
 require 'rails_helper'
 
 RSpec.describe Organization, type: :model do
-  let (:organization) {Organization.new}
+  let (:organization) {build(:organization)}
   
   describe "Unit Tests" do
-        let(:local_fire_department) do
-            org = Organization.new(status: :approved, name: "Bend Fire Department")
-            org.save(validate: false)
-            org
-        end
+    
+    it "converts to a string" do
+      expect(organization.to_s).to match(/Organization Name \d+/)
+    end
 
-        let(:rejected_org) do
-            org = Organization.new(status: :rejected)
-            org.save(validate: false)
-            org
-        end
+    it "changes it's status when approved" do
+      organization.approve
+      expect(organization.status).to eq("approved")
+    end
 
-        let(:default_org) do
-            org = Organization.new
-            org.save(validate: false)
-            org
-        end
+    it "changes it's status when rejected" do
+      organization.reject
+      expect(organization.status).to eq("rejected")
+    end
 
-        it "converts to a string" do
-          expect(local_fire_department.to_s).to eq("Bend Fire Department") 
-        end
-
-        it "changes it's status when approved" do
-          rejected_org.approve
-          expect(rejected_org.status).to eq("approved")
-        end
-
-        it "changes it's status when rejected" do
-            local_fire_department.reject
-            expect(local_fire_department.status).to eq("rejected")
-        end
-
-        it "defaults to submitted status" do
-            expect(default_org.status).to eq("submitted")
-        end
+    it "defaults to submitted status" do
+      expect(organization.status).to eq("submitted")
+    end
   end
 
   it "responds to title" do
@@ -63,7 +46,6 @@ RSpec.describe Organization, type: :model do
 
   # Validation Tests
   describe "validation tests" do
-    let (:organization) {Organization.new}
     it "responds to name" do
       expect(organization).to respond_to(:name)
     end

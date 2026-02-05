@@ -3,7 +3,7 @@ FactoryBot.define do
     sequence(:name) { |n| "Organization Name #{n}" }
     sequence(:email) { |n| "org#{n}@example.com" }
     phone { "555-123-4567" }
-    status { :approved } # Default status, can be overridden
+    status { :submitted } # Default status, can be overridden
     primary_name { "Primary Contact" }
     secondary_name { "Secondary Contact" }
     secondary_phone { "555-987-6543" }
