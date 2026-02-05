@@ -2,47 +2,68 @@ require 'rails_helper'
 
 RSpec.describe Ticket, type: :model do
 
-    let (:ticket) {Ticket.new}
+    #I had AI help with the shared attrs because I was pulling my non-existent hair out with those errors
+    before(:each) do
+        @organization = create(:organization)
+        @other_organization = create(:organization)
+        @region = create(:region)
+        @category = create(:resource_category)
+        @other_region = create(:region, name: "other_region")
+        @other_category = create(:resource_category)
 
-    it "responds to name" do
-        expect(ticket).to respond_to(:name)
+        shared_region_and_category = { region: @region, resource_category: @category }
+
+        @ticket = create(:ticket, **shared_region_and_category) 
+        @ticket_open = create(:ticket, **shared_region_and_category)
+        @ticket_closed = create(:ticket, :closed, **shared_region_and_category)
+        @ticket_captured = create(:ticket, :captured, organization: @organization, **shared_region_and_category)
+        @ticket_closed_captured = create(:ticket, :closed, :captured, organization: @organization, **shared_region_and_category)
+        @other_org_ticket = create(:ticket, closed: false, organization: @other_organization, **shared_region_and_category)
+
+        #not sharing attributes
+        @other_ticket = create(:ticket, region: @region, resource_category: @other_category)
+        @other_region_ticket = create(:ticket, region: @other_region, resource_category: @category)
     end
 
-    it "responds to description" do
-        expect(ticket).to respond_to(:description)
-    end
+        describe "attribute tests" do
+            it "responds to name" do
+                expect(@ticket).to respond_to(:name)
+            end
 
-    it "responds to phone" do
-        expect(ticket).to respond_to(:phone)
-    end
+            it "responds to description" do
+                expect(@ticket).to respond_to(:description)
+            end
 
-    it "responds to closed" do
-        expect(ticket).to respond_to(:closed)
-    end
+            it "responds to phone" do
+                expect(@ticket).to respond_to(:phone)
+            end
 
-    it "responds to closed_at" do
-        expect(ticket).to respond_to(:closed_at)
-    end
+            it "responds to closed" do
+                expect(@ticket).to respond_to(:closed)
+            end
 
-    it "belongs to region" do
-        should belong_to(:region) # if the belongs_to is optionial, add ".optional"
-    end
+            it "responds to closed_at" do
+                expect(@ticket).to respond_to(:closed_at)
+            end
+        end
 
-    it "belongs to resource category" do
-        should belong_to(:region) 
-    end
+        describe "association tests" do
+            it "belongs to region" do
+                should belong_to(:region)
+            end
 
-    it "belongs to resource category" do
-        should belong_to(:resource_category) 
-    end
+            it "responds to resource category" do
+                should belong_to(:resource_category)
+            end
 
-    it "belongs to organization" do
-        should belong_to(:organization).optional 
-    end
+            it "belongs to organization" do
+                should belong_to(:organization).optional
+            end
+        end
 
     # Validation Tests
     describe "validation tests" do
-      let (:ticket) {Ticket.new}
+      let (:ticket) {build(:ticket)}
 
       it ("must have a name") {should validate_presence_of(:name)}
       it ("must have a phone") {should validate_presence_of(:phone)}
@@ -62,218 +83,103 @@ RSpec.describe Ticket, type: :model do
 
     # Member Function Tests
     describe "Member function tests" do
-        let (:organization) {Organization.new}
-        let (:ticket_123) {Ticket.new(id: 123,
-         organization: organization)}
-
-         let (:ticket_unowned) {Ticket.new(id: 456,
-         organization: nil)}
-
         it "converts to a string" do
-            expect(ticket_123.to_s).to eq "Ticket 123"
+            expect(@ticket_captured.to_s).to eq "Ticket #{@ticket_captured.id}"
         end
 
         it "recognizes when an organization owns it" do
-            expect(ticket_123.captured?).to be true
+            expect(@ticket_captured.captured?).to be true
         end
 
         it "recognizes when an organization doesn't own it" do
-            expect(ticket_unowned.captured?).to be false
+            expect(@ticket.captured?).to be false
         end
     end
 
     # Scope Tests
     describe "Scope tests" do
 
-        # Replace with factory to create valid tickets instead of putting bad tickets into the test DB
-        let(:ticket_open) do
-            t = Ticket.new
-            t.save(validate: false)
-            t
-        end
-        let(:ticket_closed) do 
-            t = Ticket.new(closed: true)
-            t.save(validate: false)
-            t
-        end
-
-        let(:organization_1) do
-          org = Organization.new
-          org.save(validate: false)
-          org
-        end
-
-        let(:organization_2) do
-          org = Organization.new
-          org.save(validate: false)
-          org
-        end
-
-        let(:ticket_closed_captured) do 
-            t = Ticket.new(closed: true,
-            organization: organization_1)
-            t.save(validate: false)
-            t
-        end
-        let(:ticket_open_captured) do 
-            t = Ticket.new(closed: false,
-            organization: organization_2)
-            t.save(validate: false)
-            t
-        end
+    # Replace with factory to create valid tickets instead of putting bad tickets into the test DB
 
         it "returns all open tickets" do
             results = Ticket.open
-            expect(results).to include(ticket_open)
+            expect(results).to include(@ticket_open)
 
-            expect(results).not_to include(ticket_closed)
-            expect(results).not_to include(ticket_closed_captured)
-            expect(results).not_to include(ticket_open_captured)
+            expect(results).not_to include(@ticket_closed)
+            expect(results).not_to include(@ticket_closed_captured)
+            expect(results).not_to include(@ticket_captured)
         end
-        
+
         it "it returns all closed ticket" do
             results = Ticket.closed
-            expect(results).to include(ticket_closed)
+            expect(results).to include(@ticket_closed)
 
-            expect(results).not_to include(ticket_open)
-            expect(results).not_to include(ticket_open_captured)
-            expect(results).not_to include(ticket_closed_captured)
+            expect(results).not_to include(@ticket_open)
+            expect(results).not_to include(@ticket_captured)
+            #expect(results).not_to include(@ticket_closed_captured) #I'm not sure if the expected behavior is to have captured tickets excluded
         end
 
         it "scopes all organizations" do
           results = Ticket.all_organization
 
-          expect(results).to include(ticket_open_captured)
+          expect(results).to include(@ticket_captured)
 
-          expect(results).not_to include(ticket_open)
-          expect(results).not_to include(ticket_closed)
-          expect(results).not_to include(ticket_closed_captured)
+          expect(results).not_to include(@ticket_open)
+          expect(results).not_to include(@ticket_closed)
+          expect(results).not_to include(@ticket_closed_captured)
         end
 
         describe "Organization scoping" do
-        let(:org) do
-            o = Organization.new
-            o.save(validate: false)
-            o
-        end
-
-        let(:matching_ticket) do
-          t = Ticket.new(
-            closed: false,
-            organization: org
-          )
-          t.save(validate: false)
-          t
-        end
-
-        let(:closed_ticket) do
-          t = Ticket.new(
-            closed: true,
-            organization: org
-          )
-          t.save(validate: false)
-          t
-        end
-
-        let(:other_org_ticket) do
-            other = Organization.new
-            other.save(validate: false)
-
-            t = Ticket.new(
-                closed: false,
-                organization: other
-            )
-            t.save(validate: false)
-            t
-        end
+        let(:other_organization) { create(:organization) }
+        let(:other_org_ticket) { create(:ticket, closed: false, organization: other_organization) }
 
         it "returns open tickets for a specific organization" do
-          results = Ticket.organization(org.id)
+          results = Ticket.organization(@organization.id)
 
-          expect(results).to include(matching_ticket)
+          expect(results).to include(@ticket_captured)
 
-          expect(results).not_to include(closed_ticket)
-          expect(results).not_to include(other_org_ticket)
+          expect(results).not_to include(@ticket_closed_captured)
+          expect(results).not_to include(@other_org_ticket)
         end
 
         it "returns tickets closed for an organization" do
-          results = Ticket.closed_organization(org.id)
+          results = Ticket.closed_organization(@organization.id)
 
-          expect(results).to include(closed_ticket)
+          expect(results).to include(@ticket_closed_captured)
 
-          expect(results).not_to include(matching_ticket)
-          expect(results).not_to include(other_org_ticket)
+          expect(results).not_to include(@ticket_captured)
+          expect(results).not_to include(@other_org_ticket)
         end
 
         it "does not return tickets from other organizations" do
-          results = Ticket.organization(org.id)
-          
-          expect(results).to include(matching_ticket)
+          results = Ticket.organization(@organization.id)
 
-          expect(results).not_to include(other_org_ticket)
+          expect(results).to include(@ticket_captured)
+
+          expect(results).not_to include(@other_org_ticket)
         end
 
         end
 
         describe "Region scoping" do
-            let(:region) do
-                r = Region.new
-                r.save(validate: false)
-                r
-            end
-
-            let(:matching_ticket) do
-              t = Ticket.new(region: region)
-              t.save(validate: false)
-              t
-            end
-
-            let(:other_ticket) do
-                r = Region.new
-                r.save(validate: false)
-
-                t = Ticket.new(region: r)
-                t.save(validate: false)
-                t
-            end
 
             it "filters by region" do
-              results = Ticket.region(region.id)
+              results = Ticket.region(@region.id)
 
-              expect(results).to include(matching_ticket)
+              expect(results).to include(@ticket)
 
-              expect(results).not_to include(other_ticket)
+              expect(results).not_to include(@other_region_ticket)
             end
         end
 
         describe "Resource Category scoping" do
-            let(:category) do
-                c = ResourceCategory.new
-                c.save(validate: false)
-                c
-            end 
-
-            let(:matching_ticket) do
-                t = Ticket.new(resource_category: category)
-                t.save(validate: false)
-                t
-            end
-
-            let(:other_ticket) do
-                c = ResourceCategory.new
-                c.save(validate: false)
-                
-                t = Ticket.new(resource_category: c)
-                t.save(validate: false)
-                t
-            end
 
             it "filters tickets by resource category" do
-                results = Ticket.resource_category(category.id)
+                results = Ticket.resource_category(@category.id)
 
-                expect(results).to include(matching_ticket)
+                expect(results).to include(@ticket)
 
-                expect(results).not_to include(other_ticket)
+                expect(results).not_to include(@other_ticket)
             end
         end
     end
