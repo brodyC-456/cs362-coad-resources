@@ -25,34 +25,34 @@ RSpec.describe Ticket, type: :model do
         @other_region_ticket = create(:ticket, region: @other_region, resource_category: @category)
     end
 
-        describe "attribute tests" do
-            it "responds to name" do
+        describe "when checking for attributes" do
+            it "has a name" do
                 expect(@ticket).to respond_to(:name)
             end
 
-            it "responds to description" do
+            it "has a description" do
                 expect(@ticket).to respond_to(:description)
             end
 
-            it "responds to phone" do
+            it "has a phone number" do
                 expect(@ticket).to respond_to(:phone)
             end
 
-            it "responds to closed" do
+            it "knows if it is closed" do
                 expect(@ticket).to respond_to(:closed)
             end
 
-            it "responds to closed_at" do
+            it "knows when it was closed" do
                 expect(@ticket).to respond_to(:closed_at)
             end
         end
 
-        describe "association tests" do
+        describe "when checking for associations" do
             it "belongs to region" do
                 should belong_to(:region)
             end
 
-            it "responds to resource category" do
+            it "belongs to resource category" do
                 should belong_to(:resource_category)
             end
 
@@ -62,11 +62,11 @@ RSpec.describe Ticket, type: :model do
         end
 
     # Validation Tests
-    describe "validation tests" do
+    describe "when checking validations" do
       let (:ticket) {build(:ticket)}
 
       it ("must have a name") {should validate_presence_of(:name)}
-      it ("must have a phone") {should validate_presence_of(:phone)}
+      it ("must have a phone number") {should validate_presence_of(:phone)}
       it ("must have a region id") {should validate_presence_of(:region_id)}
       it ("must have a resource category id") {should validate_presence_of(:resource_category_id)}
 
@@ -82,7 +82,7 @@ RSpec.describe Ticket, type: :model do
     end
 
     # Member Function Tests
-    describe "Member function tests" do
+    describe "when checking member functions" do
         it "converts to a string" do
             expect(@ticket_captured.to_s).to eq "Ticket #{@ticket_captured.id}"
         end
@@ -97,11 +97,11 @@ RSpec.describe Ticket, type: :model do
     end
 
     # Scope Tests
-    describe "Scope tests" do
+    describe "when checking scope" do
 
     # Replace with factory to create valid tickets instead of putting bad tickets into the test DB
 
-        it "returns all open tickets" do
+        it "returns only open tickets" do
             results = Ticket.open
             expect(results).to include(@ticket_open)
 
@@ -110,7 +110,7 @@ RSpec.describe Ticket, type: :model do
             expect(results).not_to include(@ticket_captured)
         end
 
-        it "it returns all closed ticket" do
+        it "returns only closed tickets" do
             results = Ticket.closed
             expect(results).to include(@ticket_closed)
 
@@ -119,7 +119,7 @@ RSpec.describe Ticket, type: :model do
             #expect(results).not_to include(@ticket_closed_captured) #I'm not sure if the expected behavior is to have captured tickets excluded
         end
 
-        it "scopes all organizations" do
+        it "returns only captured tickets" do
           results = Ticket.all_organization
 
           expect(results).to include(@ticket_captured)
@@ -129,11 +129,11 @@ RSpec.describe Ticket, type: :model do
           expect(results).not_to include(@ticket_closed_captured)
         end
 
-        describe "Organization scoping" do
+        describe "when checking organization scoping" do
         let(:other_organization) { create(:organization) }
         let(:other_org_ticket) { create(:ticket, closed: false, organization: other_organization) }
 
-        it "returns open tickets for a specific organization" do
+        it "returns only open tickets for a specific organization" do
           results = Ticket.organization(@organization.id)
 
           expect(results).to include(@ticket_captured)
@@ -142,7 +142,7 @@ RSpec.describe Ticket, type: :model do
           expect(results).not_to include(@other_org_ticket)
         end
 
-        it "returns tickets closed for an organization" do
+        it "returns only tickets closed for an organization" do
           results = Ticket.closed_organization(@organization.id)
 
           expect(results).to include(@ticket_closed_captured)
@@ -161,9 +161,9 @@ RSpec.describe Ticket, type: :model do
 
         end
 
-        describe "Region scoping" do
+        describe "when checking region scoping" do
 
-            it "filters by region" do
+            it "returns all tickets for a specific region" do 
               results = Ticket.region(@region.id)
 
               expect(results).to include(@ticket)
@@ -172,9 +172,9 @@ RSpec.describe Ticket, type: :model do
             end
         end
 
-        describe "Resource Category scoping" do
+        describe "when checking resource category scoping" do
 
-            it "filters tickets by resource category" do
+            it "returns all tickets for a specific cateogry id" do
                 results = Ticket.resource_category(@category.id)
 
                 expect(results).to include(@ticket)
