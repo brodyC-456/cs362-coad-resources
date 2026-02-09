@@ -17,7 +17,6 @@ RSpec.describe User, type: :model do
   end
 
   describe "validation tests" do
-    # let (:user) {User.new}
 
     it ("must have an email") {should validate_presence_of(:email)}
     it ("must have a password") {should validate_presence_of(:password).on(:create)}
@@ -46,7 +45,7 @@ RSpec.describe User, type: :model do
     end
 
     it "converts to email address" do
-      expect(user.to_s).to eq("HuntersMom@aol.com")
+      expect(user.to_s).to match(/fakeuser\d@fakedomain\d.com/)
     end
   end
 end
