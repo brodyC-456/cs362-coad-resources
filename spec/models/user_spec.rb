@@ -45,7 +45,7 @@ RSpec.describe User, type: :model do
     end
 
     it "converts to email address" do
-      expect(user.to_s).to match(/fakeuser\d@fakedomain\d.com/)
+      expect(user.to_s).to match(/fakeuser\d+@fakedomain\d+.com/)
     end
   end
 end
