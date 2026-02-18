@@ -94,6 +94,14 @@ RSpec.describe Ticket, type: :model do
         it "recognizes when an organization doesn't own it" do
             expect(@ticket.captured?).to be false
         end
+
+        it "recognizes when a ticket is open" do
+            expect(@ticket_open.open?).to be true
+        end
+
+        it "recognizes when a ticket is closed" do
+            expect(@ticket_closed.open?).to be false
+        end
     end
 
     # Scope Tests
@@ -173,7 +181,6 @@ RSpec.describe Ticket, type: :model do
         end
 
         describe "when checking resource category scoping" do
-
             it "returns all tickets for a specific cateogry id" do
                 results = Ticket.resource_category(@category.id)
 
