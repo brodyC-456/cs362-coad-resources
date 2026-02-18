@@ -32,13 +32,16 @@ RSpec.describe ResourceCategory, type: :model do
     end
 
     describe "Unit tests" do
-      it "can activate" do
-        expect(resource_category.inactive?).to eq(false)
-      end
       
       it "can deactivate" do
           resource_category.deactivate
           expect(resource_category.inactive?).to eq(true)
+      end
+
+      it "can activate once deactivated" do
+        resource_category.deactivate
+        resource_category.activate
+        expect(resource_category.inactive?).to eq(false)
       end
 
       it "knows if it is inactive" do
