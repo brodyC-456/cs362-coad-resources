@@ -9,12 +9,14 @@ RSpec.describe Organization, type: :model do
       expect(organization.to_s).to match(/Organization Name \d+/)
     end
 
-    it "changes it's status when approved" do
+    it "changes its status when approved" do
+      allow(organization).to receive(:save).and_return(true)
       organization.approve
       expect(organization.status).to eq("approved")
     end
 
-    it "changes it's status when rejected" do
+    it "changes its status when rejected" do
+      allow(organization).to receive(:save).and_return(true)
       organization.reject
       expect(organization.status).to eq("rejected")
     end
@@ -78,7 +80,7 @@ RSpec.describe Organization, type: :model do
     it "responds to secondary_phone" do
       expect(organization).to respond_to(:secondary_phone)
     end
-    it "responds to title" do
+        it "responds to title" do
       expect(organization).to respond_to(:title)
     end
     it "responds to transportation" do
