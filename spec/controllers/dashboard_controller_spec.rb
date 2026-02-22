@@ -14,7 +14,6 @@ RSpec.describe DashboardController, type: :controller do
   let(:unapproved_org) { create(:organization, status: :submitted, name: "New Org", email: "new@example.com") }
   let(:user_unapproved) { create(:user, role: :organization, organization: unapproved_org, email: "new_user@example.com") }
 
-  # Correctly defined instance_doubles using :closed and :organization
   let(:mock_ticket_open) { instance_double(Ticket, id: 1, closed: false, organization: nil, region: region, resource_category: resource_category) }
   let(:mock_ticket_closed) { instance_double(Ticket, id: 2, closed: true, organization: nil, region: region, resource_category: resource_category) }
   let(:mock_ticket_captured_a) { instance_double(Ticket, id: 3, closed: false, organization: org_a, region: region, resource_category: resource_category) }
@@ -30,7 +29,6 @@ RSpec.describe DashboardController, type: :controller do
     context "as an Admin" do
       before do
         sign_in admin
-        # Stub the chainable scopes
         allow(ticket_scope).to receive(:region).with(any_args).and_return(ticket_scope)
         allow(ticket_scope).to receive(:resource_category).with(any_args).and_return(ticket_scope)
         allow(ticket_scope).to receive(:reverse).and_return(ticket_scope)

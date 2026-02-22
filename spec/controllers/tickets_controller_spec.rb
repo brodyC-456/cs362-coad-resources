@@ -4,7 +4,7 @@ RSpec.describe TicketsController, type: :controller do
 
   describe 'as a logged out user' do
     let(:user) { create(:user) }
-    let(:ticket_id) { '1' } # Use a consistent ID for the mock
+    let(:ticket_id) { '1' }
     let(:mock_ticket) { instance_double(Ticket, id: ticket_id, destroy: true, save: true) }
 
     before do
