@@ -19,5 +19,7 @@ RSpec.describe 'Creating a Ticket', type: :feature do
 
         # Make sure it works
         expect(current_path).to eq ticket_submitted_path
+        expect(Ticket.count).to eq 1
+        expect(Ticket.first.name).to eq 'Test Name'
     end
 end
